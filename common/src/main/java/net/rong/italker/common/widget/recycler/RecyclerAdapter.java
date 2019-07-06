@@ -107,6 +107,17 @@ implements View.OnClickListener, View.OnLongClickListener, AdapterCallBack<T>{
     }
 
     @Override
+    public void upadte(T data, ViewHolder<T> holder) {
+        int pos = holder.getAdapterPosition();
+        if(pos >= 0){
+            //移除并更新
+            mDataList.remove(pos);
+            mDataList.add(pos, data);
+            notifyItemChanged(pos);
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         ViewHolder viewHolder = (ViewHolder) v.getTag(R.id.tag_recycler_holder);
         if(this.mListener != null){
@@ -211,6 +222,22 @@ implements View.OnClickListener, View.OnLongClickListener, AdapterCallBack<T>{
             if(callBack != null){
                 this.callBack.upadte(data, this);
             }
+        }
+    }
+
+    /**
+     * 对回调接口做一次实现
+     * @param <T>
+     */
+    public abstract static class AdapterListenerImpl<T> implements AdapterListener<T>{
+        @Override
+        public void onItemClick(ViewHolder holder, T data) {
+
+        }
+
+        @Override
+        public void onItemLongClick(ViewHolder holder, T data) {
+
         }
     }
 }
