@@ -1,13 +1,7 @@
 package net.rong.italker.common.widget;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.database.Cursor;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -17,7 +11,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CheckBox;
@@ -35,7 +28,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GalleyView extends RecyclerView {
+public class GalleryView extends RecyclerView {
 
     private static final int LOADER_ID = 0X0100;
     private static final int MAX_IMAGE_COUNT = 3; //选中图片的最大数目
@@ -46,17 +39,17 @@ public class GalleyView extends RecyclerView {
     private SelectedChangeListener mListener;
 
 
-    public GalleyView(Context context) {
+    public GalleryView(Context context) {
         super(context);
         init();
     }
 
-    public GalleyView(Context context, AttributeSet attrs) {
+    public GalleryView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public GalleyView(Context context, AttributeSet attrs, int defStyle) {
+    public GalleryView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
@@ -253,7 +246,7 @@ public class GalleyView extends RecyclerView {
 
         @Override
         protected ViewHolder<Image> onCreateViewHolder(View root, int ViewType) {
-            return new GalleyView.ViewHolder(root);
+            return new GalleryView.ViewHolder(root);
         }
 
     }

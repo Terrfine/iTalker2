@@ -1,6 +1,8 @@
-package net.rong.italker.push;
+package net.rong.italker.push.activities;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -26,10 +28,16 @@ import net.qiujuer.genius.ui.widget.FloatActionButton;
 import net.rong.italker.common.Common;
 import net.rong.italker.common.app.Activity;
 import net.rong.italker.common.widget.PortraitView;
+import net.rong.italker.factory.persistence.Account;
 import net.rong.italker.push.Helper.NavHelper;
+import net.rong.italker.push.R;
+import net.rong.italker.push.activities.AccountActivity;
+import net.rong.italker.push.frags.assist.PermissionsFragment;
 import net.rong.italker.push.frags.main.ActiveFragment;
 import net.rong.italker.push.frags.main.ContactFragment;
 import net.rong.italker.push.frags.main.GroupFragment;
+
+import java.net.ConnectException;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -56,6 +64,21 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
 
     private NavHelper<Integer> mNavHelper;
 
+    public static void show(Context context){
+        context.startActivity(new Intent(context, MainActivity.class));
+    }
+
+    @Override
+    protected boolean initArgs(Bundle bundle) {
+        if(Account.isComplete()){
+            //客户端用户信息是否完全，完全则走正常流程
+            return super.initArgs(bundle);
+        }else {
+            UserActivity.show(this);
+            return false;
+        }
+    }
+
     @Override
     protected int getContentLayoutId() {
         return R.layout.activity_main;
@@ -73,9 +96,9 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
     @Override
     protected void initWidget() {
         super.initWidget();
-        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
+//        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+//        }
         //初始化底部辅助工具类
         mNavHelper = new NavHelper<>(this, R.id.lay_container, getSupportFragmentManager(), this);
         mNavHelper.add(R.id.action_home, new NavHelper.Tab<Integer>(ActiveFragment.class, R.string.title_home))
@@ -90,7 +113,6 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
                 this.view.setBackground(resource.getCurrent());
             }
         });
-
     }
 
     @OnClick({R.id.im_search})
@@ -100,7 +122,7 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
 
     @OnClick({R.id.btn_action})
     void onActionClice(){
-
+        AccountActivity.show(this);
     }
 
     boolean isFirst = true;
@@ -145,19 +167,19 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
                 .start();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case 1:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
-                }else
-                {
-                    finish();
-                }
-                break;
-            default:
-                break;
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        switch (requestCode){
+//            case 1:
+//                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+//
+//                }else
+//                {
+//                    finish();
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 }

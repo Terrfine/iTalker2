@@ -18,7 +18,9 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
+        maven { url "https://jitpack.io" }
+        //个推私有Maven URL地址
+        maven { url "http://mvn.gt.igexin.com/nexus/content/repositories/releases/" }
     }
 }
 
@@ -38,4 +40,13 @@ ext{
     geniusVersion = '2.0.0'
     glideVersion = '3.7.0'
     circleimageviewVersion = '2.1.0'
+    ucropVersion = "2.2.3-native"
+    easyPMVersion = "0.3.0"
+    ossVersion = '2.3.0'
+
+    gsonVersion = '2.8.0'
+    retrofitVersion = '2.1.0'
+
+    getuiVersion = '2.9.3.0'
+    dbflowVersion = "4.0.0-beta7"
 }

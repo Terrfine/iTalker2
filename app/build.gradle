@@ -9,6 +9,13 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [
+                GETUI_APP_ID : "FLHS70Bn48AJdU8hsIHLn3",
+                GETUI_APP_KEY : "snP0EbFGcq8QLPuUagafU1",
+                GETUI_APP_SECRET : "QHRnNUg4Iu8W4ffagjeep6",
+                PACKAGE_NAME : applicationId
+        ]
+
     }
 
     compileOptions {
@@ -38,9 +45,14 @@ dependencies {
     implementation "de.hdodenhof:circleimageview:$rootProject.ext.circleimageviewVersion"
     implementation "com.github.bumptech.glide:glide:$rootProject.ext.glideVersion"
     implementation "com.jakewharton:butterknife:$rootProject.ext.butterknifeVersion"
+    // 个推
+    implementation "com.getui:sdk:$rootProject.ext.getuiVersion"
+    implementation "com.github.yalantis:ucrop:$rootProject.ext.ucropVersion"
+    implementation "pub.devrel:easypermissions:$rootProject.ext.easyPMVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterknifeVersion"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation project(':factory')
     implementation project(':common')
 }
