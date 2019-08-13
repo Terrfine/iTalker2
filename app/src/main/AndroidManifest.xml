@@ -19,25 +19,33 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:replace="android:allowBackup"
         tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:allowBackup"
         tools:targetApi="m">
-
-
-        <!--个推的广播注册-->
-        <receiver android:name=".MessageReceiver"
+        <activity
+            android:name=".activities.PersonalActivity"
+            android:label="@string/title_activity_personal"></activity>
+        <activity
+            android:name=".activities.MessageActivity"
+            android:label="@string/title_activity_message" /> <!-- 个推的广播注册 -->
+        <receiver
+            android:name=".MessageReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="1000">
             <intent-filter>
-                <action android:name="com.igexin.sdk.action.${GETUI_APP_ID}"/>
+                <action android:name="com.igexin.sdk.action.${GETUI_APP_ID}" />
             </intent-filter>
         </receiver>
 
         <activity
+            android:name=".activities.SearchActivity"
+            android:label="@string/title_search"
+            android:theme="@style/AppTheme.TransStatusBar" />
+        <activity
             android:name=".activities.UserActivity"
             android:label="@string/title_activity_user"
-            android:theme="@style/AppTheme.Account"/>
+            android:theme="@style/AppTheme.Account" />
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -52,15 +60,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.AccountActivity"
             android:theme="@style/AppTheme.Account" />
-
         <activity
             android:name=".activities.MainActivity"
-            android:theme="@style/AppTheme.Main"/>
-
+            android:theme="@style/AppTheme.Main" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:theme="@style/AppTheme" />

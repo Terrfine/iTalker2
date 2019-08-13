@@ -1,10 +1,14 @@
 package net.rong.italker.factory.model.card;
 
+import net.rong.italker.factory.model.Author;
 import net.rong.italker.factory.model.db.User;
 
 import java.util.Date;
 
-public class UserCard {
+/**
+ * 用户卡片，用于接收服务器返回
+ */
+public class UserCard implements Author {
     private String id;
 
     //用户名必须唯一

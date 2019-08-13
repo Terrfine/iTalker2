@@ -38,6 +38,7 @@ import net.rong.italker.push.frags.main.ContactFragment;
 import net.rong.italker.push.frags.main.GroupFragment;
 
 import java.net.ConnectException;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -93,6 +94,12 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
         menu.performIdentifierAction(R.id.action_home,  0);
     }
 
+
+    @OnClick(R.id.im_portrait)
+    void onPortraitClick(){
+        PersonalActivity.show(this, Account.getUserId());
+    }
+
     @Override
     protected void initWidget() {
         super.initWidget();
@@ -116,13 +123,24 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
     }
 
     @OnClick({R.id.im_search})
-    void onSearchMenuClice(){
-
+    void onSearchMenuClick(){
+        //在群的界面的时候，点击顶部的搜索就进入群搜索界面
+        //其他都为人搜索的界面
+        int type = Objects.equals(mNavHelper.getCurrentTab().extra, R.string.title_group)?
+                SearchActivity.TYPE_GROUP : SearchActivity.TYPE_USER;
+        SearchActivity.show(this, type);
     }
 
     @OnClick({R.id.btn_action})
     void onActionClice(){
-        AccountActivity.show(this);
+        //浮动按钮点击时，判断当前界面是群还是联系人界面
+        //如果是群，则打开群创建的界面
+        //如果是其他，则打开添加用户揭秘那
+        if(Objects.equals(mNavHelper.getCurrentTab().extra, R.string.title_group)){
+            //TODO 打开群创建界面
+        }else {
+            SearchActivity.show(this, SearchActivity.TYPE_USER);
+        }
     }
 
     boolean isFirst = true;

@@ -130,6 +130,11 @@ public class Account {
                 .querySingle();
     }
 
+    //返回用户Id
+    public static String getUserId(){
+        return getUser().getId();
+    }
+
     /**
      * 获取Token
      * @return

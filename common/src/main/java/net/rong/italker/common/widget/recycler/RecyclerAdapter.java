@@ -106,6 +106,10 @@ implements View.OnClickListener, View.OnLongClickListener, AdapterCallBack<T>{
         return mDataList.size();
     }
 
+
+    public List<T> getItems(){
+        return mDataList;
+    }
     @Override
     public void upadte(T data, ViewHolder<T> holder) {
         int pos = holder.getAdapterPosition();
