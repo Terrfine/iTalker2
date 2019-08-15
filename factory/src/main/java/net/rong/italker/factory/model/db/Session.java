@@ -4,9 +4,6 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.structure.BaseModel;
-
-import net.rong.italker.factory.utils.DiffUiDataCallback;
 
 import java.util.Date;
 import java.util.Objects;
@@ -29,7 +26,7 @@ public class Session extends BaseDbModel<Session> {
     @Column
     private String content; // 显示在界面上的简单内容，是Message的一个描述
     @Column
-    private int receiverType = Message.RECEIVER_TYPE_NONE; // 类型，对应人，或者群消息
+    private int receiverType = Message.RECEIVER_TYPE_USER; // 类型，对应人，或者群消息
     @Column
     private int unReadCount; // 未读数量，当没有在当前界面时，应当增加未读数量
     @Column
@@ -49,7 +46,7 @@ public class Session extends BaseDbModel<Session> {
 
     public Session(Message message) {
         if (message.getGroup() == null) {
-            receiverType = Message.RECEIVER_TYPE_NONE;
+            receiverType = Message.RECEIVER_TYPE_USER;
             User other = message.getOther();
             id = other.getId();
             picture = other.getPortrait();
@@ -175,7 +172,7 @@ public class Session extends BaseDbModel<Session> {
     public static Identify createSessionIdentify(Message message) {
         Identify identify = new Identify();
         if (message.getGroup() == null) {
-            identify.type = Message.RECEIVER_TYPE_NONE;
+            identify.type = Message.RECEIVER_TYPE_USER;
             User other = message.getOther();
             identify.id = other.getId();
         } else {

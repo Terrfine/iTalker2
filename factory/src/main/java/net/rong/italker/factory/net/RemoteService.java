@@ -5,7 +5,9 @@ import net.rong.italker.factory.model.api.RspModel;
 import net.rong.italker.factory.model.api.account.AccountRspModel;
 import net.rong.italker.factory.model.api.account.LoginModel;
 import net.rong.italker.factory.model.api.account.RegisterModel;
+import net.rong.italker.factory.model.api.message.MessageCreateModel;
 import net.rong.italker.factory.model.api.user.UserUpdateModel;
+import net.rong.italker.factory.model.card.MessageCard;
 import net.rong.italker.factory.model.card.UserCard;
 
 import java.util.List;
@@ -62,7 +64,10 @@ public interface RemoteService {
     @GET("user/contact")
     Call<RspModel<List<UserCard>>> userContacts();
 
-    //获取联系人列表
+    //查询某人的消息
     @GET("user/{userId}")
     Call<RspModel<UserCard>> userFind(@Path("userId")String userId);
+
+    @POST("msg")
+    Call<RspModel<MessageCard>> msgPush(@Body MessageCreateModel model);
 }

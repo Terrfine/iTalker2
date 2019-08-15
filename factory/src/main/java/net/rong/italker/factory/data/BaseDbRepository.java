@@ -11,6 +11,7 @@ import net.rong.italker.factory.model.db.BaseDbModel;
 import net.rong.italker.factory.model.db.User;
 import net.rong.italker.utils.CollectionUtil;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,6 @@ public abstract class BaseDbRepository<Data extends BaseDbModel<Data>> implement
 
     @SuppressWarnings("unchecked")
     public BaseDbRepository() {
-
         //拿当前类的泛型数组信息
         Type[] types = Reflector.getActualTypeArguments(BaseDbRepository.class, this.getClass());
         dataClass = (Class<Data>) types[0];

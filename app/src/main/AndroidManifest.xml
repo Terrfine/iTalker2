@@ -24,10 +24,13 @@
         tools:targetApi="m">
         <activity
             android:name=".activities.PersonalActivity"
-            android:label="@string/title_activity_personal"></activity>
+            android:label="@string/title_activity_personal"/>
+
         <activity
             android:name=".activities.MessageActivity"
-            android:label="@string/title_activity_message" /> <!-- 个推的广播注册 -->
+            android:label="@string/title_activity_message"
+            android:theme="@style/AppTheme.Message"/>
+        <!-- 个推的广播注册 -->
         <receiver
             android:name=".MessageReceiver"
             android:enabled="true"
