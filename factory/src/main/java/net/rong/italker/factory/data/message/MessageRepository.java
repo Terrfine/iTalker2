@@ -37,7 +37,8 @@ public class MessageRepository extends BaseDbRepository<Message> implements Mess
                         .and(Message_Table.sender_id.eq(receiverId))
                         .and(Message_Table.group_id.isNull()))
                 .or(Message_Table.receiver_id.eq(receiverId))
-                .orderBy(Message_Table.createAt, true)
+                .orderBy(Message_Table.createAt, false)
+                .limit(30)
                 .async()
                 .queryListResultCallback(this)
                 .execute();
@@ -57,7 +58,7 @@ public class MessageRepository extends BaseDbRepository<Message> implements Mess
     public void onListQueryResult(QueryTransaction transaction, @NonNull List<Message> tResult) {
         //反转返回的集合
         //TODO 不能查询的时候反转？
-//        Collections.reverse(tResult);
+        Collections.reverse(tResult);
         //然后在调度
         super.onListQueryResult(transaction, tResult);
     }
