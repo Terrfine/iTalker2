@@ -90,7 +90,7 @@ public abstract class BaseDbRepository<Data extends BaseDbModel<Data>> implement
     private void insertOrUpdate(Data data){
         int index = indexOf(data);
         if(index >= 0){
-
+            replace(index,data);
         }else {
             insert(data);
         }

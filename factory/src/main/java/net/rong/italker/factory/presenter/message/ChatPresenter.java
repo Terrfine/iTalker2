@@ -6,6 +6,7 @@ import net.rong.italker.factory.data.helper.MessageHelper;
 import net.rong.italker.factory.data.message.MessageDataSource;
 import net.rong.italker.factory.model.api.message.MessageCreateModel;
 import net.rong.italker.factory.model.db.Message;
+import net.rong.italker.factory.persistence.Account;
 import net.rong.italker.factory.presenter.BaseSourcePresenter;
 import net.rong.italker.factory.utils.DiffUiDataCallback;
 
@@ -67,6 +68,17 @@ implements ChatContract.Presenter{
 
     @Override
     public boolean rePush(Message message) {
+        //确定消息是可重复发送的
+        if((message.getSender().getId().equalsIgnoreCase(Account.getUserId()))
+        &&message.getStatus() == Message.STATUS_FAILED){
+
+            //更改状态
+            message.setStatus(Message.STATUS_CREATED);
+            //构建发送的model
+            MessageCreateModel model = MessageCreateModel.buildWithMessage(message);
+            MessageHelper.push(model);
+            return true;
+        }
         return false;
     }
 }

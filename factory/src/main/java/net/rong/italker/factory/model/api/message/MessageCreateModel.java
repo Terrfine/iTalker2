@@ -120,4 +120,25 @@ public class MessageCreateModel {
         }
         return this.card;
     }
+
+    /**
+     * 把一个message消息转换为一个创建状态的CreateModel
+     * @param message
+     * @return
+     */
+    public static MessageCreateModel buildWithMessage(Message message){
+        MessageCreateModel model = new MessageCreateModel();
+        model.id = message.getId();
+        model.content = message.getContent();
+        model.type = message.getType();
+        model.attach = message.getAttach();
+        if (message.getReceiver()!=null){
+            model.receiverId = message.getReceiver().getId();
+            model.receiverType = Message.RECEIVER_TYPE_USER;
+        }else {
+            model.receiverId = message.getGroup().getId();
+            model.receiverType = Message.RECEIVER_TYPE_GROUP;
+        }
+        return model;
+    }
 }

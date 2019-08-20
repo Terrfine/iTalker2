@@ -4,12 +4,18 @@ package net.rong.italker.push.frags.message;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.ViewTarget;
 
 import net.rong.italker.common.widget.PortraitView;
 import net.rong.italker.factory.model.db.User;
@@ -40,6 +46,20 @@ public class ChatUserFragment extends ChatFragment<User> implements ChatContract
     @Override
     protected int getContentLayoutId() {
         return R.layout.fragment_chat_user;
+    }
+
+    @Override
+    protected void initWidget(View root) {
+        super.initWidget(root);
+        Glide.with(this)
+                .load(R.drawable.default_banner_chat)
+                .centerCrop()
+                .into(new ViewTarget<CollapsingToolbarLayout, GlideDrawable>(mCollapsingToolbarLayout) {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                        this.view.setContentScrim(resource.getCurrent());
+                    }
+                });
     }
 
     @Override
@@ -117,5 +137,7 @@ public class ChatUserFragment extends ChatFragment<User> implements ChatContract
     @Override
     public void onInit(User user) {
         // 对和你聊天的朋友的信息进行初始化操作
+        mPortraitView.setup(Glide.with(this), user.getPortrait());
+        mCollapsingToolbarLayout.setTitle(user.getName());
     }
 }

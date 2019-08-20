@@ -12,6 +12,7 @@ public class App extends Application {
         //调用Factory进行初始化
         Factory.setup();
         //推送进行初始化
-        PushManager.getInstance().initialize(this);
+        PushManager.getInstance().initialize(this, AppPushService.class);
+        PushManager.getInstance().registerPushIntentService(this, AppMessageReceiverService.class);
     }
 }

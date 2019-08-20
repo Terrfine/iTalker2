@@ -31,16 +31,28 @@
             android:label="@string/title_activity_message"
             android:theme="@style/AppTheme.Message"/>
         <!-- 个推的广播注册 -->
-        <receiver
-            android:name=".MessageReceiver"
+        <!--<receiver-->
+            <!--android:name=".MessageReceiver"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true"-->
+            <!--android:permission="1000">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.igexin.sdk.action.${GETUI_APP_ID}" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+
+        <service android:name=".AppPushService"
             android:enabled="true"
             android:exported="true"
-            android:permission="1000">
-            <intent-filter>
-                <action android:name="com.igexin.sdk.action.${GETUI_APP_ID}" />
-            </intent-filter>
-        </receiver>
+            android:label="AppPushService"
+            android:permission="1000"
+            android:process=":pushservice"/>
 
+        <service android:name=".AppMessageReceiverService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="AppMessageReceiverService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
         <activity
             android:name=".activities.SearchActivity"
             android:label="@string/title_search"
