@@ -1,9 +1,15 @@
 package net.rong.italker.factory.model.db;
 
+import android.text.TextUtils;
+
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+
+import net.rong.italker.factory.data.helper.GroupHelper;
+import net.rong.italker.factory.data.helper.MessageHelper;
+import net.rong.italker.factory.data.helper.UserHelper;
 
 import java.util.Date;
 import java.util.Objects;
@@ -184,6 +190,64 @@ public class Session extends BaseDbModel<Session> {
 
     public void refreshToNow() {
         //TODO 刷新会话对应的信息为当前Message的最新状态
+        Message message;
+        if(receiverType == Message.RECEIVER_TYPE_GROUP){
+            //刷新当前对应的群的相关信息
+            message = MessageHelper.findLastWithGroup(id);
+            if(message == null){
+                //如果没有基本信息
+                if (TextUtils.isEmpty(this.picture) || TextUtils.isEmpty(this.title)){
+                    Group group = GroupHelper.findFromLocal(id);
+                    if(group != null){
+                        this.picture = group.getPicture();
+                        this.title = group.getName();
+                    }
+                }
+                this.message = null;
+                this.content = "";
+                this.modifyAt = new Date(System.currentTimeMillis());
+            }else {
+                if (TextUtils.isEmpty(this.picture) || TextUtils.isEmpty(this.title)){
+                    Group group = message.getGroup();
+                    group.load();
+                    this.picture = group.getPicture();
+                    this.title = group.getName();
+                }
+                this.message = message;
+                this.content = message.getSampleContent();
+                this.modifyAt = message.getCreateAt();
+            }
+        }else {
+            //和人聊天
+            message = MessageHelper.findLastWithUser(id);
+            if(message == null){
+                //我和他的消息已经删除完成了
+                //如果没有基本信息
+                if (TextUtils.isEmpty(this.picture) || TextUtils.isEmpty(this.title)){
+                    User user = UserHelper.findFromLocal(id);
+                    if(user != null){
+                        this.picture = user.getPortrait();
+                        this.title = user.getName();
+                    }
+                }
+                this.message = null;
+                this.content = "";
+                this.modifyAt = new Date(System.currentTimeMillis());
+            }else{
+                //我和他有消息来往
+
+                //如果没有基本信息
+                if (TextUtils.isEmpty(this.picture) || TextUtils.isEmpty(this.title)){
+                    User other = message.getOther();
+                    other.load(); //懒加载
+                    this.picture = other.getPortrait();
+                    this.title = other.getName();
+                }
+                this.message = message;
+                this.content = message.getSampleContent();
+                this.modifyAt = message.getCreateAt();
+            }
+        }
     }
 
 

@@ -137,7 +137,7 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
         //如果是群，则打开群创建的界面
         //如果是其他，则打开添加用户揭秘那
         if(Objects.equals(mNavHelper.getCurrentTab().extra, R.string.title_group)){
-            //TODO 打开群创建界面
+            GroupCreateActivity.show(this);
         }else {
             SearchActivity.show(this, SearchActivity.TYPE_USER);
         }

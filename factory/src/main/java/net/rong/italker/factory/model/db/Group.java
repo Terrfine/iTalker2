@@ -6,10 +6,13 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import net.rong.italker.factory.data.helper.GroupHelper;
+import net.rong.italker.factory.model.db.view.MemberUserModel;
 import net.rong.italker.factory.utils.DiffUiDataCallback;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -21,6 +24,7 @@ import java.util.Objects;
  */
 @Table(database = AppDatabase.class)
 public class Group extends BaseDbModel<Group> implements Serializable{
+
     @PrimaryKey
     private String id; // 群Id
     @Column
@@ -41,6 +45,9 @@ public class Group extends BaseDbModel<Group> implements Serializable{
 
 
     public Object holder; // 预留字段，用于界面显示
+
+
+
 
     public String getId() {
         return id;
@@ -143,5 +150,25 @@ public class Group extends BaseDbModel<Group> implements Serializable{
                 && Objects.equals(this.desc, oldT.desc)
                 && Objects.equals(this.picture, oldT.picture)
                 && Objects.equals(this.holder, oldT.holder);
+    }
+
+    private long groupMemberCount = -1;
+
+    //获取当前群的成员数量，使用内存缓存
+    public long getGroupMemberCount(){
+        if (groupMemberCount ==-1){
+            groupMemberCount = GroupHelper.getMemberCount(id);
+        }
+        return groupMemberCount;
+    }
+
+    private List<MemberUserModel> groupLatelyMembers;
+    //获取当前群成员对应的成员信息
+    public List<MemberUserModel> getLatelyGroupMembers() {
+        if (groupLatelyMembers == null || groupLatelyMembers.isEmpty()){
+            //加载简单的用户信息，返回4条，至多
+            groupLatelyMembers = GroupHelper.getMemberUsers(id, 4);
+        }
+        return groupLatelyMembers;
     }
 }

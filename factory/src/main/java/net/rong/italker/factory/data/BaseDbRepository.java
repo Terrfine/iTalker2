@@ -25,7 +25,7 @@ public abstract class BaseDbRepository<Data extends BaseDbModel<Data>> implement
 
     //和presenter交互的回调
     private SucceedCallback<List<Data>> callback;
-    private final List<Data> dataList = new LinkedList<>();  //当前缓存的数据
+    protected final LinkedList<Data> dataList = new LinkedList<>();  //当前缓存的数据
     private Class<Data> dataClass; //当前Data的对应的真是的class信息
 
     @SuppressWarnings("unchecked")
@@ -103,7 +103,7 @@ public abstract class BaseDbRepository<Data extends BaseDbModel<Data>> implement
     }
 
     //添加方法
-    private void insert(Data data){
+    protected void insert(Data data){
         dataList.add(data);
     }
 
@@ -130,9 +130,9 @@ public abstract class BaseDbRepository<Data extends BaseDbModel<Data>> implement
         }
         //转变为数组
         //Data[] users = tResult.toArray(new Data[0]);  //不可行
-        Data[] users = CollectionUtil.toArray(tResult, dataClass);
+        Data[] datas = CollectionUtil.toArray(tResult, dataClass);
         //回到数据集更新的操作中
-        onDataSave(users);
+        onDataSave(datas);
     }
 
     /**

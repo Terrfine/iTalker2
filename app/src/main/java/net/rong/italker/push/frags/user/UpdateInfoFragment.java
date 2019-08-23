@@ -63,26 +63,23 @@ public class UpdateInfoFragment extends PresenterFragment<UpdateInfoContract.Pre
 
     @OnClick(R.id.im_portrait)
     void onPortraitClick(){
+        //show的时候建议使用getChildFragmentManager
+//tag  GalleyFragment class名
         new GalleyFragment()
-                .setListener(new GalleyFragment.OnSelectedListener() {
-                    @Override
-                    public void onSelectedImage(String path) {
-                        UCrop.Options options = new UCrop.Options();
-                        options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
-                        options.setCompressionQuality(96);
+                .setListener(path -> {
+                    UCrop.Options options = new UCrop.Options();
+                    options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
+                    options.setCompressionQuality(96);
 
-                        //得到头像的缓存地址
-                        File dPath = Application.getPortraitTmpFile();
+                    //得到头像的缓存地址
+                    File dPath = Application.getPortraitTmpFile();
 
-                        //发起剪切
-                        UCrop.of(Uri.fromFile(new File(path)), Uri.fromFile(dPath))
-                                .withAspectRatio(1, 1)  //1:1比例
-                                .withMaxResultSize(520, 520) //返回最大的尺寸
-                                .withOptions(options) //相关参数
-                                .start(getActivity());
-                    }
-                    //show的时候建议使用getChildFragmentManager
-                    //tag  GalleyFragment class名
+                    //发起剪切
+                    UCrop.of(Uri.fromFile(new File(path)), Uri.fromFile(dPath))
+                            .withAspectRatio(1, 1)  //1:1比例
+                            .withMaxResultSize(520, 520) //返回最大的尺寸
+                            .withOptions(options) //相关参数
+                            .start(getActivity());
                 }).show(getChildFragmentManager(), GalleyFragment.class.getName());
     }
 

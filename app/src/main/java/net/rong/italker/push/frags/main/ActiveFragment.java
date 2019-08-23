@@ -19,6 +19,7 @@ import net.rong.italker.common.widget.recycler.RecyclerAdapter;
 import net.rong.italker.factory.model.db.Session;
 import net.rong.italker.factory.model.db.User;
 import net.rong.italker.factory.presenter.message.SessionContract;
+import net.rong.italker.factory.presenter.message.SessionPresenter;
 import net.rong.italker.push.R;
 import net.rong.italker.push.activities.MessageActivity;
 import net.rong.italker.push.activities.PersonalActivity;
@@ -92,7 +93,7 @@ implements SessionContract.View{
 
     @Override
     protected SessionContract.Presenter initPresenter() {
-        return null;
+        return new SessionPresenter(this);
     }
 
     @Override
