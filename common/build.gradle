@@ -36,6 +36,7 @@ dependencies {
     api "com.github.bumptech.glide:glide:$rootProject.ext.glideVersion"
     api "net.qiujuer.genius:kit-handler:$rootProject.ext.geniusVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterknifeVersion"
+    implementation "net.qiujuer.widget:airpanel:$rootProject.ext.airpanelVersion"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

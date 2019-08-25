@@ -54,6 +54,9 @@ dependencies {
     implementation "com.github.yalantis:ucrop:$rootProject.ext.ucropVersion"
     implementation "pub.devrel:easypermissions:$rootProject.ext.easyPMVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterknifeVersion"
+
+    //空气面板
+    implementation "net.qiujuer.widget:airpanel:$rootProject.ext.airpanelVersion"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

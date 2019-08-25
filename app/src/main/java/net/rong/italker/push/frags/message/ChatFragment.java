@@ -1,6 +1,7 @@
 package net.rong.italker.push.frags.message;
 
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -12,6 +13,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -19,6 +21,8 @@ import com.bumptech.glide.Glide;
 
 import net.qiujuer.genius.ui.compat.UiCompat;
 import net.qiujuer.genius.ui.widget.Loading;
+import net.qiujuer.widget.airpanel.AirPanel;
+import net.qiujuer.widget.airpanel.Util;
 import net.rong.italker.common.app.Fragment;
 import net.rong.italker.common.app.PresenterFragment;
 import net.rong.italker.common.widget.PortraitView;
@@ -60,6 +64,9 @@ public abstract class ChatFragment<InitModel>
     @BindView(R.id.btn_submit)
     View mSubmit;
 
+    //控制顶部面板与软键盘过度的Boss控件
+    private AirPanel.Boss mPanelBoss;
+
     @Override
     protected void initArgs(Bundle bundle) {
         super.initArgs(bundle);
@@ -67,8 +74,35 @@ public abstract class ChatFragment<InitModel>
     }
 
     @Override
+    protected final int getContentLayoutId() {
+        return R.layout.fragment_chat_common;
+    }
+
+    //得到顶部布局资源
+    @LayoutRes
+    protected abstract  int getHeaderLayoutId();
+
+    @Override
     protected void initWidget(View root) {
+        //拿到占位布局
+        //替换顶部布局一定需要发生在super之前
+        //防止控件绑定异常
+        ViewStub stub = root.findViewById(R.id.view_stub_header);
+        stub.setLayoutResource(getHeaderLayoutId());
+        stub.inflate();
+
+        //在这里进行了控件绑定
         super.initWidget(root);
+
+        //初始化面板操作
+        mPanelBoss =  root.findViewById(R.id.lay_content);
+        mPanelBoss.setup(new AirPanel.PanelListener() {
+            @Override
+            public void requestHideSoftKeyboard() {
+                //请求隐藏软键盘
+                Util.hideKeyboard(mContent);
+            }
+        });
         initToolbar();
         initEditContent();
         //RecyclerView基本设置
@@ -123,7 +157,8 @@ public abstract class ChatFragment<InitModel>
 
     @OnClick(R.id.btn_face)
     void onFaceClick(){
-
+        //仅仅只需要请求打开即可
+        mPanelBoss.openPanel();
     }
 
     @OnClick(R.id.btn_record)
@@ -144,7 +179,7 @@ public abstract class ChatFragment<InitModel>
     }
 
     private void onMoreClick(){
-
+        mPanelBoss.openPanel();
     }
 
     @Override

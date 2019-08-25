@@ -3,7 +3,10 @@ package net.rong.italker.factory.presenter.message;
 import net.rong.italker.factory.model.db.Group;
 import net.rong.italker.factory.model.db.Message;
 import net.rong.italker.factory.model.db.User;
+import net.rong.italker.factory.model.db.view.MemberUserModel;
 import net.rong.italker.factory.presenter.BaseContract;
+
+import java.util.List;
 
 public interface ChatContract {
     interface Presenter extends BaseContract.Presenter{
@@ -30,6 +33,10 @@ public interface ChatContract {
 
     //群聊天的界面
     interface GroupView extends View<Group>{
+        //显示管理员菜单
+        void showAdminOption(boolean isAdmin);
 
+        //初始化成员信息
+        void onInitGroupMembers(List<MemberUserModel> members,long moreCount);
     }
 }
