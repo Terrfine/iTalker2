@@ -63,7 +63,17 @@ implements ChatContract.Presenter{
 
     @Override
     public void pushImages(String[] paths) {
-
+        if (paths == null || paths.length == 0)
+            return;
+        //此时路径是本地的手机上的路径
+        for (String path : paths) {
+            MessageCreateModel model = new MessageCreateModel.Builder()
+                    .receiver(mReceiverId, mReceiverType)
+                    .content(path,Message.TYPE_PIC)
+                    .build();
+            //进行网络发送
+            MessageHelper.push(model);
+        }
     }
 
     @Override

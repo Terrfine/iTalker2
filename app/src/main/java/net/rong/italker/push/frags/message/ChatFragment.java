@@ -10,15 +10,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import net.qiujuer.genius.ui.Ui;
 import net.qiujuer.genius.ui.compat.UiCompat;
 import net.qiujuer.genius.ui.widget.Loading;
 import net.qiujuer.widget.airpanel.AirPanel;
@@ -28,13 +32,16 @@ import net.rong.italker.common.app.PresenterFragment;
 import net.rong.italker.common.widget.PortraitView;
 import net.rong.italker.common.widget.adapter.TextWatcherAdapter;
 import net.rong.italker.common.widget.recycler.RecyclerAdapter;
+import net.rong.italker.face.Face;
 import net.rong.italker.factory.model.db.Message;
 import net.rong.italker.factory.model.db.User;
 import net.rong.italker.factory.persistence.Account;
 import net.rong.italker.factory.presenter.message.ChatContract;
 import net.rong.italker.push.R;
 import net.rong.italker.push.activities.MessageActivity;
+import net.rong.italker.push.frags.panel.PanelFragment;
 
+import java.io.File;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -42,7 +49,7 @@ import butterknife.OnClick;
 
 public abstract class ChatFragment<InitModel>
         extends PresenterFragment<ChatContract.Presenter>
-        implements AppBarLayout.BaseOnOffsetChangedListener , ChatContract.View<InitModel>{
+        implements AppBarLayout.BaseOnOffsetChangedListener , ChatContract.View<InitModel>, PanelFragment.PanelCallback {
     protected String mReceiverId;
     protected Adapter mAdapter;
 
@@ -66,6 +73,7 @@ public abstract class ChatFragment<InitModel>
 
     //控制顶部面板与软键盘过度的Boss控件
     private AirPanel.Boss mPanelBoss;
+    private PanelFragment mPanelFragment;
 
     @Override
     protected void initArgs(Bundle bundle) {
@@ -103,6 +111,8 @@ public abstract class ChatFragment<InitModel>
                 Util.hideKeyboard(mContent);
             }
         });
+        mPanelFragment = (PanelFragment) getChildFragmentManager().findFragmentById(R.id.frag_panel);
+        mPanelFragment.setup(this);
         initToolbar();
         initEditContent();
         //RecyclerView基本设置
@@ -159,11 +169,13 @@ public abstract class ChatFragment<InitModel>
     void onFaceClick(){
         //仅仅只需要请求打开即可
         mPanelBoss.openPanel();
+        mPanelFragment.showFace();
     }
 
     @OnClick(R.id.btn_record)
     void onRecordClick(){
-
+        mPanelBoss.openPanel();
+        mPanelFragment.showRecord();
     }
 
     @OnClick(R.id.btn_submit)
@@ -180,6 +192,7 @@ public abstract class ChatFragment<InitModel>
 
     private void onMoreClick(){
         mPanelBoss.openPanel();
+        mPanelFragment.showGallery();
     }
 
     @Override
@@ -190,6 +203,23 @@ public abstract class ChatFragment<InitModel>
     @Override
     public void onAdapterDataChanged() {
         // 界面没有占位布局，Recycler是一直显示的，所以不用做任何
+    }
+
+    @Override
+    public EditText getInputEditText() {
+        return mContent;
+    }
+
+    @Override
+    public void onSendGallery(String[] paths) {
+        //图片回调回来
+        mPresenter.pushImages(paths);
+    }
+
+    @Override
+    public void onRecordDone(File file, long time) {
+        //TODO 语音回调回来
+
     }
 
     private class Adapter extends RecyclerAdapter<Message>{
@@ -310,8 +340,12 @@ public abstract class ChatFragment<InitModel>
         @Override
         protected void onBind(Message message) {
             super.onBind(message);
+
+            Spannable spannable = new SpannableString(message.getContent());
+            //解析表情
+            Face.decode(mContent, spannable, (int) Ui.dipToPx(getResources(), 20));
             //设置内容
-            mContent.setText(message.getContent());
+            mContent.setText(spannable);
         }
     }
 
@@ -332,6 +366,8 @@ public abstract class ChatFragment<InitModel>
     //图片的Holder
     class PicHolder extends BaseHolder{
 
+        @BindView(R.id.im_image)
+        ImageView mContent;
         public PicHolder(@NonNull View itemView) {
             super(itemView);
         }
@@ -339,7 +375,12 @@ public abstract class ChatFragment<InitModel>
         @Override
         protected void onBind(Message message) {
             super.onBind(message);
-            //TODO
+            //当是图片类型的时候，content中就是图片的地址
+            String content = message.getContent();
+            Glide.with(ChatFragment.this)
+                    .load(content)
+                    .fitCenter()
+                    .into(mContent);
         }
     }
 }

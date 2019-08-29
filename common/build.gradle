@@ -37,8 +37,10 @@ dependencies {
     api "net.qiujuer.genius:kit-handler:$rootProject.ext.geniusVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterknifeVersion"
     implementation "net.qiujuer.widget:airpanel:$rootProject.ext.airpanelVersion"
+    implementation "com.google.code.gson:gson:$rootProject.ext.gsonVersion"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     api project(':lang')
+    implementation project(':face_res')
 }

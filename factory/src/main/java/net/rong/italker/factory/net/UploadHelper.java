@@ -21,7 +21,7 @@ import java.util.Date;
  */
 public class UploadHelper {
     private static final String TAG = UploadHelper.class.getSimpleName();
-    private static final String ENDPOINT = "http://oss-cn-beijing.aliyuncs.com";
+    public static final String ENDPOINT = "http://oss-cn-beijing.aliyuncs.com";
     private static final String BUCKET_NAME = "myitalker2";
     public static OSS getClient(){
 

@@ -4,18 +4,22 @@ package net.rong.italker.push.frags.main;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import net.qiujuer.genius.ui.Ui;
 import net.rong.italker.common.app.Fragment;
 import net.rong.italker.common.app.PresenterFragment;
 import net.rong.italker.common.widget.EmptyView;
 import net.rong.italker.common.widget.GalleryView;
 import net.rong.italker.common.widget.PortraitView;
 import net.rong.italker.common.widget.recycler.RecyclerAdapter;
+import net.rong.italker.face.Face;
 import net.rong.italker.factory.model.db.Session;
 import net.rong.italker.factory.model.db.User;
 import net.rong.italker.factory.presenter.message.SessionContract;
@@ -32,7 +36,7 @@ import butterknife.OnClick;
  * A simple {@link Fragment} subclass.
  */
 public class ActiveFragment extends PresenterFragment<SessionContract.Presenter>
-implements SessionContract.View{
+        implements SessionContract.View {
     @BindView(R.id.empty)
     EmptyView mEmptyView;
 
@@ -107,7 +111,7 @@ implements SessionContract.View{
     }
 
     //界面数据渲染
-    class ViewHolder extends RecyclerAdapter.ViewHolder<Session>{
+    class ViewHolder extends RecyclerAdapter.ViewHolder<Session> {
         @BindView(R.id.im_portrait)
         PortraitView mPortraitView;
 
@@ -128,7 +132,13 @@ implements SessionContract.View{
         protected void onBind(Session session) {
             mPortraitView.setup(Glide.with(ActiveFragment.this), session.getPicture());
             mName.setText(session.getTitle());
-            mContent.setText(TextUtils.isEmpty(session.getContent())?"":session.getContent());
+
+            String str = TextUtils.isEmpty(session.getContent()) ? "" : session.getContent();
+            Spannable spannable = new SpannableString(str);
+            //解析表情
+            Face.decode(mContent, spannable, (int) mContent.getTextSize());
+            //设置内容
+            mContent.setText(spannable);
             mTime.setText(DateTimeUtil.getSampleDate(session.getModifyAt()));
         }
     }
