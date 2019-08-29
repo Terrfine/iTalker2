@@ -49,7 +49,7 @@ import butterknife.OnClick;
 
 public abstract class ChatFragment<InitModel>
         extends PresenterFragment<ChatContract.Presenter>
-        implements AppBarLayout.BaseOnOffsetChangedListener , ChatContract.View<InitModel>, PanelFragment.PanelCallback {
+        implements AppBarLayout.BaseOnOffsetChangedListener, ChatContract.View<InitModel>, PanelFragment.PanelCallback {
     protected String mReceiverId;
     protected Adapter mAdapter;
 
@@ -88,7 +88,7 @@ public abstract class ChatFragment<InitModel>
 
     //得到顶部布局资源
     @LayoutRes
-    protected abstract  int getHeaderLayoutId();
+    protected abstract int getHeaderLayoutId();
 
     @Override
     protected void initWidget(View root) {
@@ -103,7 +103,7 @@ public abstract class ChatFragment<InitModel>
         super.initWidget(root);
 
         //初始化面板操作
-        mPanelBoss =  root.findViewById(R.id.lay_content);
+        mPanelBoss = root.findViewById(R.id.lay_content);
         mPanelBoss.setup(new AirPanel.PanelListener() {
             @Override
             public void requestHideSoftKeyboard() {
@@ -129,7 +129,7 @@ public abstract class ChatFragment<InitModel>
     }
 
     //初始化toolbar
-    protected void initToolbar(){
+    protected void initToolbar() {
         initAppbar();
         Toolbar toolbar = mToolbar;
         toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -142,13 +142,13 @@ public abstract class ChatFragment<InitModel>
     }
 
     //给界面的Appbar设置一个监听，得到关闭和打开的时候的进度
-    private void initAppbar(){
+    private void initAppbar() {
         mAppBarLayout.addOnOffsetChangedListener(this);
     }
 
     //初始化输入框监听
-    private void initEditContent(){
-        mContent.addTextChangedListener(new TextWatcherAdapter(){
+    private void initEditContent() {
+        mContent.addTextChangedListener(new TextWatcherAdapter() {
             @Override
             public void afterTextChanged(Editable s) {
                 super.afterTextChanged(s);
@@ -166,31 +166,31 @@ public abstract class ChatFragment<InitModel>
     }
 
     @OnClick(R.id.btn_face)
-    void onFaceClick(){
+    void onFaceClick() {
         //仅仅只需要请求打开即可
         mPanelBoss.openPanel();
         mPanelFragment.showFace();
     }
 
     @OnClick(R.id.btn_record)
-    void onRecordClick(){
+    void onRecordClick() {
         mPanelBoss.openPanel();
         mPanelFragment.showRecord();
     }
 
     @OnClick(R.id.btn_submit)
-    void onSubmitClick(){
-        if(mSubmit.isActivated()){
+    void onSubmitClick() {
+        if (mSubmit.isActivated()) {
             //发送
             String content = mContent.getText().toString();
             mContent.setText("");
             mPresenter.pushText(content);
-        }else {
+        } else {
             onMoreClick();
         }
     }
 
-    private void onMoreClick(){
+    private void onMoreClick() {
         mPanelBoss.openPanel();
         mPanelFragment.showGallery();
     }
@@ -218,37 +218,37 @@ public abstract class ChatFragment<InitModel>
 
     @Override
     public void onRecordDone(File file, long time) {
-        //TODO 语音回调回来
-
+        //语音回调回来
+        mPresenter.pushAudio(file.getAbsolutePath(), time);
     }
 
-    private class Adapter extends RecyclerAdapter<Message>{
+    private class Adapter extends RecyclerAdapter<Message> {
 
         @Override
         protected int getItemViewType(int position, Message message) {
             boolean isRight = Objects.equals(message.getSender().getId(), Account.getUserId());
-            switch (message.getType()){
+            switch (message.getType()) {
                 //文字内容
                 case Message.TYPE_STR:
-                    return isRight?R.layout.cell_chat_text_right : R.layout.cell_chat_text_left;
+                    return isRight ? R.layout.cell_chat_text_right : R.layout.cell_chat_text_left;
 
                 //语音内容
                 case Message.TYPE_AUDIO:
-                    return isRight?R.layout.cell_chat_audio_right : R.layout.cell_chat_audio_left;
+                    return isRight ? R.layout.cell_chat_audio_right : R.layout.cell_chat_audio_left;
 
                 //图片内容
                 case Message.TYPE_PIC:
-                    return isRight?R.layout.cell_chat_pic_right : R.layout.cell_chat_pic_left;
+                    return isRight ? R.layout.cell_chat_pic_right : R.layout.cell_chat_pic_left;
 
                 //文件内容
                 default:
-                    return isRight?R.layout.cell_chat_text_right : R.layout.cell_chat_text_left;
+                    return isRight ? R.layout.cell_chat_text_right : R.layout.cell_chat_text_left;
             }
         }
 
         @Override
         protected ViewHolder<Message> onCreateViewHolder(View root, int ViewType) {
-            switch (ViewType){
+            switch (ViewType) {
                 case R.layout.cell_chat_text_right:
                 case R.layout.cell_chat_text_left:
                     return new TextHolder(root);
@@ -261,7 +261,7 @@ public abstract class ChatFragment<InitModel>
                 case R.layout.cell_chat_pic_left:
                     return new PicHolder(root);
 
-                    //默认情况下，返回的就是Text类型的Holder进行处理
+                //默认情况下，返回的就是Text类型的Holder进行处理
                 default:
                     return new TextHolder(root);
             }
@@ -269,7 +269,7 @@ public abstract class ChatFragment<InitModel>
     }
 
     //Holder的基类
-    class BaseHolder extends RecyclerAdapter.ViewHolder<Message>{
+    class BaseHolder extends RecyclerAdapter.ViewHolder<Message> {
 
         @BindView(R.id.im_portrait)
         PortraitView mPortrait;
@@ -291,25 +291,25 @@ public abstract class ChatFragment<InitModel>
             //头像加载
             mPortrait.setup(Glide.with(ChatFragment.this), sender);
 
-            if(mLoading != null){
+            if (mLoading != null) {
                 //当前布局在右边
                 int status = message.getStatus();
-                if(status == Message.STATUS_DONE){
+                if (status == Message.STATUS_DONE) {
                     //正常状态
                     mLoading.stop();
                     mLoading.setVisibility(View.GONE);
-                }else if (status == Message.STATUS_CREATED){
+                } else if (status == Message.STATUS_CREATED) {
                     //正在发送中的状态
                     mLoading.setVisibility(View.VISIBLE);
                     mLoading.setProgress(0);
-                    mLoading.setForegroundColor(UiCompat.getColor(getResources(),R.color.colorAccent));
+                    mLoading.setForegroundColor(UiCompat.getColor(getResources(), R.color.colorAccent));
                     mLoading.start();
-                }else if (status == Message.STATUS_FAILED){
+                } else if (status == Message.STATUS_FAILED) {
                     //发送失败状态,允许重新发送
                     mLoading.setVisibility(View.VISIBLE);
                     mLoading.stop();
                     mLoading.setProgress(1);
-                    mLoading.setForegroundColor(UiCompat.getColor(getResources(),R.color.alertImportant));
+                    mLoading.setForegroundColor(UiCompat.getColor(getResources(), R.color.alertImportant));
                 }
 
                 //当发送失败时候才允许点击
@@ -318,9 +318,9 @@ public abstract class ChatFragment<InitModel>
         }
 
         @OnClick(R.id.im_portrait)
-        void  onRePushClick(){
+        void onRePushClick() {
             //重新发送
-            if(mLoading != null && mPresenter.rePush(mData)){
+            if (mLoading != null && mPresenter.rePush(mData)) {
                 //必须是右边的才有可能需要重新发送
                 //状态改变需要重新刷新界面当前的信息
                 updateData(mData);
@@ -329,10 +329,11 @@ public abstract class ChatFragment<InitModel>
     }
 
     //文字的Holder
-    class TextHolder extends BaseHolder{
+    class TextHolder extends BaseHolder {
 
         @BindView(R.id.txt_content)
         TextView mContent;
+
         public TextHolder(@NonNull View itemView) {
             super(itemView);
         }
@@ -350,7 +351,12 @@ public abstract class ChatFragment<InitModel>
     }
 
     //语音的Holder
-    class AudioHolder extends BaseHolder{
+    class AudioHolder extends BaseHolder {
+
+        @BindView(R.id.txt_content)
+        TextView mContent;
+        @BindView(R.id.im_audio_track)
+        ImageView mAudioTrack;
 
         public AudioHolder(@NonNull View itemView) {
             super(itemView);
@@ -359,15 +365,43 @@ public abstract class ChatFragment<InitModel>
         @Override
         protected void onBind(Message message) {
             super.onBind(message);
-            //TODO
+            String attach = TextUtils.isEmpty(message.getAttach()) ? "0" : message.getAttach();
+            mContent.setText(formatTime(attach));
+        }
+
+        //播放开始
+        void onPlayStart(){
+            mAudioTrack.setVisibility(View.VISIBLE);
+        }
+
+        //播放停止
+        void onPlayStop(){
+            //占位并隐藏
+            mAudioTrack.setVisibility(View.INVISIBLE);
+        }
+
+        private String formatTime(String attach) {
+            float time;
+            try {
+                //毫秒转成秒
+                time = Float.parseFloat(attach) / 1000f;
+            } catch (Exception e) {
+                time = 0;
+            }
+            //12000/1000f = 12.000
+            String shortTime = String.valueOf(Math.round(time * 10) / 10f);
+            //1.0->1  1.2000->1.2
+            shortTime = shortTime.replaceAll("[.]0+?$|0+?$", "");
+            return String.format("%s\"", shortTime);
         }
     }
 
     //图片的Holder
-    class PicHolder extends BaseHolder{
+    class PicHolder extends BaseHolder {
 
         @BindView(R.id.im_image)
         ImageView mContent;
+
         public PicHolder(@NonNull View itemView) {
             super(itemView);
         }

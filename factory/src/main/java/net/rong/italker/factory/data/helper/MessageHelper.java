@@ -80,6 +80,7 @@ public class MessageHelper {
                             //失败
                             card.setStatus(Message.STATUS_FAILED);
                             Factory.getMessageCenter().dispatch(card);
+                            //TODO 疑惑：不用return？
                         }
 
                         //成功则把网络路径进行替换
@@ -124,8 +125,12 @@ public class MessageHelper {
 
 
     private static String uploadAudio(String content) {
-        //TODO 上传语音
-        return null;
+        //上传语音
+        File file = new File(content);
+        if (!file.exists() || file.length() <= 0)
+            return null;
+        //上传并返回
+        return UploadHelper.uploadAudio(content);
     }
 
     //上传图片
@@ -148,7 +153,7 @@ public class MessageHelper {
             String tempFile = String.format("%s/image/Cache_%s.png", cacheDir, SystemClock.uptimeMillis());
             try {
                 //压缩工具类
-                if (PicturesCompressor.compressImage(file.getAbsolutePath(), tempFile, Common.Constance.MAX_UPLOAD_IMAGE_LENGTH)){
+                if (PicturesCompressor.compressImage(file.getAbsolutePath(), tempFile, Common.Constance.MAX_UPLOAD_IMAGE_LENGTH)) {
                     String ossPath = UploadHelper.uploadImage(tempFile);
                     //清理缓存
                     StreamUtil.delete(tempFile);

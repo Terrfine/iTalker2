@@ -18,8 +18,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import net.qiujuer.genius.ui.Ui;
+import net.rong.italker.common.app.Application;
 import net.rong.italker.common.app.Fragment;
+import net.rong.italker.common.tools.AudioRecordHelper;
 import net.rong.italker.common.tools.UiTool;
+import net.rong.italker.common.widget.AudioRecordView;
 import net.rong.italker.common.widget.GalleryView;
 import net.rong.italker.common.widget.recycler.RecyclerAdapter;
 import net.rong.italker.face.Face;
@@ -144,7 +147,63 @@ public class PanelFragment extends Fragment {
 
     //初始化语音
     private void initRecord(View root) {
+        View recordView = mRecordPanel = root.findViewById(R.id.lay_panel_record);
+        final AudioRecordView audioRecordView = recordView.findViewById(R.id.view_audio_record);
 
+        //录音的缓存文件
+        File tmpFile = Application.getAudioTmpFile(true);
+        //录音辅助工具类
+        final AudioRecordHelper helper = new AudioRecordHelper(tmpFile, new AudioRecordHelper.RecordCallback() {
+            @Override
+            public void onRecordStart() {
+
+            }
+
+            @Override
+            public void onProgress(long time) {
+
+            }
+
+            @Override
+            public void onRecordDone(File file, long time) {
+                //时间是毫秒，小于1秒则不发送
+                if (time<1000)
+                    return;
+                //更改为一个发送的录音文件
+                File audioFile = Application.getAudioTmpFile(false);
+                if (file.renameTo(audioFile)){
+                    PanelCallback panelCallback = mCallback;
+                    if (panelCallback != null) {
+                        panelCallback.onRecordDone(audioFile, time);
+                    }
+                }
+            }
+        });
+        //初始化
+        audioRecordView.setup(new AudioRecordView.Callback() {
+            @Override
+            public void requestStartRecord() {
+                //请求开始
+                helper.recordAsync();
+            }
+
+            @Override
+            public void requestStopRecord(int type) {
+                //请求结束
+                switch (type) {
+                    case AudioRecordView.END_TYPE_CANCEL:
+                    case AudioRecordView.END_TYPE_DELETE:
+                        //删除和取消都代表想要取消
+                        helper.stop(true);
+                        break;
+                    case AudioRecordView.END_TYPE_NONE:
+                    case AudioRecordView.END_TYPE_PLAY:
+                        //播放暂时当作就是想要发送
+                        helper.stop(false);
+                        break;
+                }
+            }
+        });
     }
 
     //初始化图片
@@ -168,7 +227,7 @@ public class PanelFragment extends Fragment {
     }
 
     //点击的时候触发，传回一个控件和选中的路径
-    private void onGallerySendClick(GalleryView galleryView, String[] paths){
+    private void onGallerySendClick(GalleryView galleryView, String[] paths) {
         //通知给聊天界面
         //清理状态
         galleryView.clear();
@@ -179,7 +238,7 @@ public class PanelFragment extends Fragment {
     }
 
     public void showFace() {
-//        mRecordPanel.setVisibility(View.GONE);
+        mRecordPanel.setVisibility(View.GONE);
         mGalleryPanel.setVisibility(View.GONE);
         mFacePanel.setVisibility(View.VISIBLE);
     }
@@ -187,11 +246,11 @@ public class PanelFragment extends Fragment {
     public void showRecord() {
         mGalleryPanel.setVisibility(View.GONE);
         mFacePanel.setVisibility(View.GONE);
-//        mRecordPanel.setVisibility(View.VISIBLE);
+        mRecordPanel.setVisibility(View.VISIBLE);
     }
 
     public void showGallery() {
-//        mRecordPanel.setVisibility(View.GONE);
+        mRecordPanel.setVisibility(View.GONE);
         mFacePanel.setVisibility(View.GONE);
         mGalleryPanel.setVisibility(View.VISIBLE);
     }
