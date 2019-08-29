@@ -81,6 +81,7 @@ public class MessageHelper {
                             card.setStatus(Message.STATUS_FAILED);
                             Factory.getMessageCenter().dispatch(card);
                             //TODO 疑惑：不用return？
+                            return;
                         }
 
                         //成功则把网络路径进行替换
