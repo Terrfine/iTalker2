@@ -23,6 +23,7 @@ public class UploadHelper {
     private static final String TAG = UploadHelper.class.getSimpleName();
     public static final String ENDPOINT = "http://oss-cn-beijing.aliyuncs.com";
     private static final String BUCKET_NAME = "myitalker2";
+    public static final String BUCKET_HEADER = "http://myitalker2.oss-cn-beijing.aliyuncs.com";
     public static OSS getClient(){
 
         String stsServer = "STS应用服务器地址，例如http://abc.com";

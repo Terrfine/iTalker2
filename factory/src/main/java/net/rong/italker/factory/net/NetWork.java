@@ -18,6 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetWork {
     private static NetWork instance;
     private Retrofit retrofit;
+    private OkHttpClient client;
     static
     {
         instance = new NetWork();
@@ -26,10 +27,9 @@ public class NetWork {
     private NetWork(){
     }
 
-    //构建一个Retrofit
-    public static Retrofit getRetrofit(){
-        if(instance.retrofit != null)
-            return instance.retrofit;
+    public static OkHttpClient getClient(){
+        if(instance.client != null)
+            return instance.client;
         OkHttpClient client = new OkHttpClient.Builder()
                 //给所有的请求添加一个拦截器
                 .addInterceptor(new Interceptor() {
@@ -49,6 +49,17 @@ public class NetWork {
                     }
                 })
                 .build();
+        //存储起来
+        instance.client = client;
+        return instance.client;
+    }
+
+    //构建一个Retrofit
+    public static Retrofit getRetrofit(){
+        if(instance.retrofit != null)
+            return instance.retrofit;
+        OkHttpClient client = getClient();
+
         Retrofit.Builder builder = new Retrofit.Builder();
         //设置电脑链接
         instance.retrofit =  builder.baseUrl(Common.Constance.API_URL)

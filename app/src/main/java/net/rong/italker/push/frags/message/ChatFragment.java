@@ -13,7 +13,6 @@ import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.EditText;
@@ -22,13 +21,16 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import net.qiujuer.genius.kit.handler.Run;
+import net.qiujuer.genius.kit.handler.runable.Action;
 import net.qiujuer.genius.ui.Ui;
 import net.qiujuer.genius.ui.compat.UiCompat;
 import net.qiujuer.genius.ui.widget.Loading;
 import net.qiujuer.widget.airpanel.AirPanel;
 import net.qiujuer.widget.airpanel.Util;
-import net.rong.italker.common.app.Fragment;
+import net.rong.italker.common.app.Application;
 import net.rong.italker.common.app.PresenterFragment;
+import net.rong.italker.common.tools.AudioPlayHelper;
 import net.rong.italker.common.widget.PortraitView;
 import net.rong.italker.common.widget.adapter.TextWatcherAdapter;
 import net.rong.italker.common.widget.recycler.RecyclerAdapter;
@@ -37,6 +39,8 @@ import net.rong.italker.factory.model.db.Message;
 import net.rong.italker.factory.model.db.User;
 import net.rong.italker.factory.persistence.Account;
 import net.rong.italker.factory.presenter.message.ChatContract;
+import net.rong.italker.factory.utils.FileCache;
+import net.rong.italker.push.App;
 import net.rong.italker.push.R;
 import net.rong.italker.push.activities.MessageActivity;
 import net.rong.italker.push.frags.panel.PanelFragment;
@@ -74,6 +78,10 @@ public abstract class ChatFragment<InitModel>
     //控制顶部面板与软键盘过度的Boss控件
     private AirPanel.Boss mPanelBoss;
     private PanelFragment mPanelFragment;
+
+    //语音的基础
+    private FileCache<AudioHolder> mAudioFileCache;
+    private AudioPlayHelper<AudioHolder> mAudioPlayer;
 
     @Override
     protected void initArgs(Bundle bundle) {
@@ -119,6 +127,61 @@ public abstract class ChatFragment<InitModel>
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new Adapter();
         mRecyclerView.setAdapter(mAdapter);
+        //添加适配器监听器，进行点击的实现
+        mAdapter.setListener(new RecyclerAdapter.AdapterListenerImpl<Message>() {
+            @Override
+            public void onItemClick(RecyclerAdapter.ViewHolder holder, Message message) {
+                if (message.getType() == Message.TYPE_AUDIO && holder instanceof ChatFragment.AudioHolder)
+                    //权限的判断，当然权限已经全局申请了
+                    mAudioFileCache.download((AudioHolder) holder,message.getContent());
+            }
+        });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        mAudioPlayer = new AudioPlayHelper<>(new AudioPlayHelper.RecordPlayListener<AudioHolder>() {
+            @Override
+            public void onPlayStart(AudioHolder audioHolder) {
+                audioHolder.onPlayStart();
+            }
+
+            @Override
+            public void onPlayStop(AudioHolder audioHolder) {
+                audioHolder.onPlayStop();
+            }
+
+            @Override
+            public void onPlayError(AudioHolder audioHolder) {
+                Application.showToast(R.string.toast_audio_play_error);
+            }
+        });
+        //进入界面时候就进行初始化
+        mAudioFileCache = new FileCache<>("audio/cache", "mp3", new FileCache.CacheListener<AudioHolder>() {
+
+            @Override
+            public void onDownloadSucceed(AudioHolder audioHolder, File file) {
+                Run.onUiAsync(new Action() {
+                    @Override
+                    public void call() {
+                        mAudioPlayer.trigger(audioHolder,file.getAbsolutePath());
+                    }
+                });
+            }
+
+            @Override
+            public void onDownloadFailed(AudioHolder audioHolder) {
+                Application.showToast(R.string.toast_audio_play_error);
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAudioPlayer.destroy();
     }
 
     @Override
@@ -370,12 +433,12 @@ public abstract class ChatFragment<InitModel>
         }
 
         //播放开始
-        void onPlayStart(){
+        void onPlayStart() {
             mAudioTrack.setVisibility(View.VISIBLE);
         }
 
         //播放停止
-        void onPlayStop(){
+        void onPlayStop() {
             //占位并隐藏
             mAudioTrack.setVisibility(View.INVISIBLE);
         }

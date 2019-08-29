@@ -60,7 +60,7 @@ public class MessageHelper {
                 //TODO 如果是文件类型的（语音，图片，文件），需要先上传后才发送
                 if (card.getType() != Message.TYPE_STR) {
                     //不是文字类型
-                    if (!card.getContent().startsWith(UploadHelper.ENDPOINT)) {
+                    if (!card.getContent().startsWith(UploadHelper.BUCKET_HEADER)) {
                         //没有上传到云服务器的，还是本地手机文件
                         String content;
 
